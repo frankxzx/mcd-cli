@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.env
+.secrets/
+*token*
+!mcd_fitness/
+PROMO.md
+ISSUE.md
