@@ -1,6 +1,6 @@
 ---
 name: mcd-cli
-description: mcd —— 把麦当劳装进 $PATH。用 npm/unix 风格命令（mcd menu、mcd install、mcd audit、mcd coupon ls、mcd cal、mcd checkout --dry-run）在终端或 AI 助手里浏览菜单、查营养、做"营养安全审计"、看券和活动、用 calculate-price 出小票。用户说"用命令行点麦当劳""mcd install 巨无霸""帮我 audit 一下这顿饭"等时使用。
+description: mcd —— 把麦当劳装进 $PATH。用 npm/unix 风格命令（mcd menu、mcd install、mcd audit、mcd fit、mcd week、mcd coupon ls、mcd cal、mcd checkout --dry-run）在终端或 AI 助手里浏览菜单、查营养、做"营养安全审计"、按健身目标算最便宜组合、排一周午餐预算、看券和活动、用 calculate-price 出小票。用户说"用命令行点麦当劳""mcd install 巨无霸""帮我 audit 一下这顿饭""高蛋白怎么点最便宜""这周 130 块怎么排午餐"等时使用。
 version: 10.24.0
 license: MIT
 requires:
@@ -21,6 +21,8 @@ requires:
 | `mcd ls` / `mcd rm <餐品>` | 本地购物车 |
 | `mcd nutrition [餐品]` | `list-nutrition-foods` |
 | `mcd audit` | `list-nutrition-foods`，按 npm audit 格式报告钠/热量/蛋白/含糖饮品"漏洞"并给出 fix 建议 |
+| `mcd fit [--goal 减脂\|增肌\|高蛋白\|均衡]` | `list-nutrition-foods` + `query-meals`（可选 `calculate-price` 校验）；精确搜索最便宜组合 |
+| `mcd week --budget N` | `query-meals` + `campaign-calendar` + `available-coupons`；一周午餐不重样 |
 | `mcd coupon ls` | `available-coupons` + `query-store-coupons` |
 | `mcd cal` | `campaign-calendar` |
 | `mcd checkout --dry-run`（别名 `build`） | **只调用** `calculate-price`，输出构建日志风格的小票 |
@@ -40,4 +42,4 @@ requires:
 `mcd sudo make me a burger`、`mcd fortune`、`mcd -v`（版本号 10.24，程序员节）。
 
 ## 免责
-营养与价格来自麦当劳官方 MCP，仅供参考，以下单页为准；本项目非麦当劳官方产品。
+营养与价格来自麦当劳官方 MCP，仅供参考，以下单页为准；本项目非麦当劳官方产品。不构成医疗或营养建议。

@@ -1,0 +1,406 @@
+{
+ "store": {
+  "storeCode": "1450713",
+  "storeName": "麦当劳上海黄浦华旭国际大厦餐厅",
+  "address": "南京东路街道西藏中路336号"
+ },
+ "fetchedAt": "2026-10-14 12:49",
+ "candidates": [
+  {
+   "code": "9900005456",
+   "name": "麦辣鸡腿汉堡三件套",
+   "price": 33.5,
+   "originalPrice": 46.0,
+   "family": "鸡",
+   "tags": [
+    "套餐",
+    "立省10.5元起"
+   ],
+   "livePrice": true
+  },
+  {
+   "code": "9900016075",
+   "name": "龙焰芝士棒鸡腿堡三件套",
+   "price": 29.9,
+   "originalPrice": 50.5,
+   "family": "鸡",
+   "tags": [
+    "上新",
+    "浓郁奶香拉丝芝士"
+   ],
+   "livePrice": true
+  },
+  {
+   "code": "9900016073",
+   "name": "龙焰鸡腿堡三件套",
+   "price": 26.9,
+   "originalPrice": 47.5,
+   "family": "鸡",
+   "tags": [
+    "上新",
+    "韩式辣椒黄油风味"
+   ],
+   "livePrice": true
+  },
+  {
+   "code": "9900005460",
+   "name": "麦香鱼套餐",
+   "price": 33.5,
+   "originalPrice": 46.0,
+   "family": "鱼",
+   "tags": [
+    "套餐",
+    "麦香鱼系列"
+   ],
+   "livePrice": true
+  },
+  {
+   "code": "9900005462",
+   "name": "板烧鸡腿堡三件套",
+   "price": 34.5,
+   "originalPrice": 47.0,
+   "family": "鸡",
+   "tags": [
+    "套餐",
+    "新升级",
+    "更多汁"
+   ],
+   "livePrice": true
+  },
+  {
+   "code": "9900005464",
+   "name": "双层吉士汉堡套餐",
+   "price": 34.0,
+   "originalPrice": 46.5,
+   "family": "牛",
+   "tags": [
+    "100%纯牛肉",
+    "套餐"
+   ],
+   "livePrice": true
+  },
+  {
+   "code": "9900005466",
+   "name": "巨无霸三件套",
+   "price": 36.5,
+   "originalPrice": 49.0,
+   "family": "牛",
+   "tags": [
+    "100%纯牛肉",
+    "套餐"
+   ],
+   "livePrice": true
+  },
+  {
+   "code": "9900005449",
+   "name": "吉士汉堡包套餐",
+   "price": 26.0,
+   "originalPrice": 38.5,
+   "family": "牛",
+   "tags": [
+    "100%纯牛肉",
+    "套餐"
+   ],
+   "livePrice": true
+  },
+  {
+   "code": "9900005451",
+   "name": "麦辣鸡翅4块套餐",
+   "price": 36.5,
+   "originalPrice": 49.0,
+   "family": "鸡",
+   "tags": [
+    "套餐",
+    "立省10.5元起"
+   ],
+   "livePrice": true
+  },
+  {
+   "code": "9900005453",
+   "name": "麦香鸡套餐",
+   "price": 28.0,
+   "originalPrice": 40.5,
+   "family": "鸡",
+   "tags": [
+    "套餐",
+    "立省10.5元起"
+   ],
+   "livePrice": true
+  },
+  {
+   "code": "9900015684",
+   "name": "麦辣鸡翅两件套",
+   "price": 13.9,
+   "originalPrice": 25.0,
+   "family": "鸡",
+   "tags": [
+    "经典精选",
+    "限时特惠"
+   ],
+   "livePrice": true
+  },
+  {
+   "code": "9900005468",
+   "name": "培根蔬萃双层牛堡三件套",
+   "price": 35.5,
+   "originalPrice": 48.0,
+   "family": "牛",
+   "tags": [
+    "100%纯牛肉",
+    "套餐"
+   ],
+   "livePrice": true
+  },
+  {
+   "code": "9900005413",
+   "name": "双层深海鳕鱼堡三件套",
+   "price": 35.0,
+   "originalPrice": 47.5,
+   "family": "鱼",
+   "tags": [
+    "套餐",
+    "麦香鱼系列"
+   ],
+   "livePrice": true
+  },
+  {
+   "code": "9900016311",
+   "name": "龙焰美味四件套",
+   "price": 57.0,
+   "originalPrice": 57.0,
+   "family": "鸡",
+   "tags": [],
+   "livePrice": true
+  },
+  {
+   "code": "9900004835",
+   "name": "麦乐鸡套餐",
+   "price": 25.0,
+   "originalPrice": 37.5,
+   "family": "鸡",
+   "tags": [
+    "套餐",
+    "立省10.5元起"
+   ],
+   "livePrice": true
+  },
+  {
+   "code": "9900013304",
+   "name": "人气经典随心配",
+   "price": 14.9,
+   "originalPrice": 14.9,
+   "family": "其他",
+   "tags": [
+    "超值百种组合随心配"
+   ],
+   "livePrice": true
+  },
+  {
+   "code": "9900011126",
+   "name": "酥脆无双套餐",
+   "price": 20.0,
+   "originalPrice": 20.0,
+   "family": "其他",
+   "tags": [],
+   "livePrice": true
+  },
+  {
+   "code": "9900015602",
+   "name": "大堡口福三件套",
+   "price": 22.9,
+   "originalPrice": 47.0,
+   "family": "牛",
+   "tags": [
+    "大口吃肉好快乐"
+   ],
+   "livePrice": true
+  },
+  {
+   "code": "9900011128",
+   "name": "“堡”你欢乐套餐",
+   "price": 28.0,
+   "originalPrice": 42.5,
+   "family": "其他",
+   "tags": [
+    "粉丝之选"
+   ],
+   "livePrice": true
+  },
+  {
+   "code": "9900011121",
+   "name": "“苹”水相“鱼”套餐",
+   "price": 36.0,
+   "originalPrice": 54.0,
+   "family": "鱼",
+   "tags": [
+    "粉丝之选"
+   ],
+   "livePrice": true
+  },
+  {
+   "code": "9900015568",
+   "name": "精选超值随心配",
+   "price": 13.9,
+   "originalPrice": 13.9,
+   "family": "其他",
+   "tags": [
+    "超值百种组合随心配"
+   ],
+   "livePrice": true
+  },
+  {
+   "code": "9900015686",
+   "name": "麦辣鸡腿堡两件套",
+   "price": 14.9,
+   "originalPrice": 32.5,
+   "family": "鸡",
+   "tags": [
+    "经典精选",
+    "限时特惠"
+   ],
+   "livePrice": true
+  },
+  {
+   "code": "9900011123",
+   "name": "“辣”么快乐套餐",
+   "price": 24.0,
+   "originalPrice": 36.5,
+   "family": "鸡",
+   "tags": [],
+   "livePrice": true
+  },
+  {
+   "code": "9900005411",
+   "name": "不素之霸双层牛堡三件套",
+   "price": 37.5,
+   "originalPrice": 50.0,
+   "family": "牛",
+   "tags": [
+    "100%纯牛肉",
+    "套餐"
+   ],
+   "livePrice": true
+  },
+  {
+   "code": "9900004064",
+   "name": "精选单人餐三件套",
+   "price": 34.5,
+   "originalPrice": 46.0,
+   "family": "其他",
+   "tags": [
+    "爆款",
+    "经典精选"
+   ],
+   "livePrice": true
+  },
+  {
+   "code": "9900009242",
+   "name": "“苹板”支撑Pro套餐",
+   "price": 39.5,
+   "originalPrice": 53.5,
+   "family": "鸡",
+   "tags": [],
+   "livePrice": true
+  },
+  {
+   "code": "9900009245",
+   "name": "牛气满满套餐",
+   "price": 35.0,
+   "originalPrice": 47.5,
+   "family": "牛",
+   "tags": [],
+   "livePrice": true
+  },
+  {
+   "code": "9900005428",
+   "name": "培根安格斯厚牛堡三件套",
+   "price": 45.5,
+   "originalPrice": 58.0,
+   "family": "牛",
+   "tags": [
+    "100%安格斯牛肉",
+    "套餐"
+   ],
+   "livePrice": true
+  },
+  {
+   "code": "9900005430",
+   "name": "芝士安格斯厚牛堡三件套",
+   "price": 42.5,
+   "originalPrice": 55.0,
+   "family": "牛",
+   "tags": [
+    "100%安格斯牛肉",
+    "套餐"
+   ],
+   "livePrice": true
+  }
+ ],
+ "calendar": {
+  "2026-10-12": [
+   "超值𝟗.𝟗元早餐两件套陪你开工啦😋",
+   "乐享90分钟高质量亲子时间"
+  ],
+  "2026-10-13": [
+   "麦当劳 X PEACEMINUSONE"
+  ],
+  "2026-10-14": [
+   "麦当劳 X PEACEMINUSONE",
+   "超值𝟗.𝟗元早餐两件套陪你开工啦😋",
+   "韩式风味蘸酱上新❤️就「酱」心有所「薯」",
+   "麦当劳联动G-DRAGON",
+   "🫐一口爆汁！蓝莓爆爆珠麦旋风上新",
+   "早餐爆款回归，快来pick你的厚松饼堡！📣",
+   "🍫麦咖啡13.9r浓浓黑巧来啦！",
+   "麦咖啡一早现磨🥳元气早餐震撼来袭！",
+   "🩶灰白撞色，灰焰圆筒酷爽登场",
+   "学生专属！49元150天麦金学期卡💳",
+   "过家家派对上线，快来一起解锁梦想职业",
+   "“韩”风刮到了四件套~龙焰鸡腿堡来袭！",
+   "乐享90分钟高质量亲子时间",
+   "快来一起参加麦麦派对吧！"
+  ],
+  "2026-10-15": [
+   "麦当劳 X PEACEMINUSONE"
+  ],
+  "2026-10-16": [
+   "麦当劳联动G-DRAGON"
+  ],
+  "2026-10-18": [
+   "韩式风味蘸酱上新❤️就「酱」心有所「薯」"
+  ],
+  "2026-10-20": [
+   "早餐爆款回归，快来pick你的厚松饼堡！📣"
+  ],
+  "2026-10-21": [
+   "🍫麦咖啡13.9r浓浓黑巧来啦！"
+  ],
+  "2026-10-22": [
+   "第三周周边即将开售✨限定主题丝巾！"
+  ],
+  "2026-10-24": [
+   "🩶灰白撞色，灰焰圆筒酷爽登场"
+  ],
+  "2026-10-25": [
+   "🫐一口爆汁！蓝莓爆爆珠麦旋风上新"
+  ],
+  "2026-10-26": [
+   "麦咖啡一早现磨🥳元气早餐震撼来袭！"
+  ],
+  "2026-10-28": [
+   "“韩”风刮到了四件套~龙焰鸡腿堡来袭！"
+  ],
+  "2026-10-30": [
+   "学生专属！49元150天麦金学期卡💳"
+  ]
+ },
+ "coupons": [
+  "9.9元中杯冰美式",
+  "中薯条买一送一",
+  "人气麦旋风买一送一",
+  "免费脆薯饼",
+  "巧克力味厚松饼猪柳蛋套餐",
+  "王牌小食拼"
+ ],
+ "storeCoupons": []
+}

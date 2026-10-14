@@ -8,11 +8,11 @@
 | Tool | 命令 |
 |---|---|
 | `query-nearby-stores` | `mcd store search` |
-| `query-meals` | `mcd menu` / `mcd install` |
-| `list-nutrition-foods` | `mcd nutrition` / `mcd audit` |
-| `available-coupons`、`query-store-coupons` | `mcd coupon ls` |
-| `campaign-calendar` | `mcd cal` |
-| `calculate-price` | `mcd checkout --dry-run` |
+| `query-meals` | `mcd menu` / `mcd install` / `mcd fit` / `mcd week` |
+| `list-nutrition-foods` | `mcd nutrition` / `mcd audit` / `mcd fit` |
+| `available-coupons`、`query-store-coupons` | `mcd coupon ls` / `mcd week` |
+| `campaign-calendar` | `mcd cal` / `mcd week` |
+| `calculate-price` | `mcd checkout --dry-run` / `mcd fit --verify` |
 | `create-order` | **CLI 不调用**；只有 Skill 里的 Agent 在用户明确回复「确认下单」后才可以调用 |
 
 ## 调用流程
@@ -28,6 +28,10 @@ sequenceDiagram
   CLI->>MCP: query-meals（名称→code）
   Dev->>CLI: mcd audit
   CLI->>MCP: list-nutrition-foods
+  Dev->>CLI: mcd fit --goal 高蛋白
+  CLI->>MCP: list-nutrition-foods + query-meals
+  Dev->>CLI: mcd week --budget 130
+  CLI->>MCP: query-meals + campaign-calendar
   Dev->>CLI: mcd checkout --dry-run
   CLI->>MCP: calculate-price
   MCP-->>CLI: 应付金额（分）
@@ -35,9 +39,10 @@ sequenceDiagram
 ```
 
 ## 与同类项目的区别
-榜上的 mcd-git 用 **git 的比喻**（add / rebase / push 下单、贡献图）。mcd-cli 走的是**包管理器 + Unix 工具**这条路：`install` 会打印依赖树，`audit` 用来查营养"漏洞"，`menu` 能直接接 `grep`，`cal` 看日历，`checkout` 默认就是 dry-run 构建。重点放在**营养审计**和**零写操作**上。
+榜上的 mcd-git 用 **git 的比喻**（add / rebase / push 下单、贡献图）。mcd-cli 走的是**包管理器 + Unix 工具**这条路：`install` 会打印依赖树，`audit` 用来查营养"漏洞"，`fit`/`week` 做目标与预算规划，`menu` 能直接接 `grep`，`cal` 看日历，`checkout` 默认就是 dry-run 构建。重点放在**营养审计、规划能力**和**零写操作**上。
 
 ## 业务价值
 - 在开发者最常待的终端里触达麦当劳菜单、活动和券，适合程序员节话题传播
-- `mcd audit` 用官方营养数据给出可执行的建议（换无糖饮品、加蛋白），带动更健康的搭配
+- `mcd audit` / `mcd fit` 用官方营养数据给出可执行的建议（换无糖饮品、按宏量营养素点餐）
+- `mcd week` 帮打工人在预算内排一周不重样的午餐，配合活动日历
 - dry-run 小票让用户在下单前看到真实价格，减少下单失败和取消

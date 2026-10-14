@@ -2,7 +2,10 @@
 import argparse, json, os, random, sys, time
 
 from .backend import backend
-from .data import nutrition_index, match
+from .data import nutrition_index, match, join_menu_items
+from .optimizer import Goal, PRESETS, optimize
+from .planner import lunch_candidates, plan_week, DAYS
+import datetime as dt
 
 VERSION = "10.24.0"
 HOME = os.path.expanduser(os.environ.get("MCD_HOME", "~/.mcd"))
@@ -193,6 +196,160 @@ def cmd_fortune(a, st, be):
                          "Premature optimization is the root of all evil. Premature 薯条 is not."]))
 
 
+
+def cmd_fit(a, st, be):
+    """麦门健身餐：按热量/蛋白质目标找最便宜组合。"""
+    g = Goal(max_items=a.max_items, exclude=[x for x in (a.exclude or "").split(",") if x])
+    for k, v in PRESETS.get(a.goal or "", {}).items():
+        setattr(g, k, v)
+    for k in ("max_kcal", "min_kcal", "min_protein", "max_fat", "max_carb", "max_sodium", "budget"):
+        v = getattr(a, k, None)
+        if v is not None:
+            setattr(g, k, v)
+
+    online = be.live
+    store = st.get("store")
+    if online:
+        if a.city or a.keyword:
+            hits = be.stores(a.city or "", a.keyword or a.city or "")
+            if not hits:
+                sys.exit(f"{R}error:{X} 没有找到门店")
+            store = {"storeCode": hits[0]["storeCode"], "storeName": hits[0].get("storeName", "")}
+            st["store"] = store; _save(st)
+        store_code = _need_store(st, be)
+        store = st["store"]
+        nut = be.nutrition()
+        _, meals = be.menu(store_code)
+        items = join_menu_items(meals, nut)
+        src = "实时 MCP"
+        priced = True
+    else:
+        # prefer pre-joined fit snapshot; else join menu+nutrition
+        fit_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "fit_snapshot.json")
+        if os.path.exists(fit_path):
+            snap = json.load(open(fit_path, encoding="utf-8"))
+            items = snap["items"]; store = snap.get("store") or store
+            src = "本地快照 " + snap.get("fetchedAt", ""); priced = True
+        else:
+            nut = be.nutrition(); _, meals = be.menu(_need_store(st, be) if st.get("store") else "offline")
+            items = join_menu_items(meals, nut); src = "离线菜单+营养库"; priced = True
+
+    plans = optimize(items, g, top=a.top, objective="price" if priced else "protein")
+    verify = None
+    if a.verify and be.live and plans and store:
+        d = be.price(store["storeCode"], [(it["code"], it["quantity"]) for it in plans[0]["items"]])
+        verify = {"price": d.get("price", 0) / 100, "originalPrice": d.get("originalPrice", 0) / 100}
+
+    if a.json:
+        print(json.dumps({"goal": g.__dict__, "store": store, "plans": plans, "verify": verify}, ensure_ascii=False, indent=1))
+        return 0 if plans else 1
+
+    print(f"{B}🍔 mcd fit{X} | 数据: {src}" + (f" | 门店: {store.get('storeName')}" if store else ""))
+    tgt = f"目标: ≤{g.max_kcal:.0f}kcal, 蛋白≥{g.min_protein:.0f}g"
+    if g.budget < 1e8: tgt += f", 预算≤¥{g.budget:.0f}"
+    if g.max_fat < 1e8: tgt += f", 脂肪≤{g.max_fat:.0f}g"
+    print(tgt + "\n")
+    if not plans:
+        print(f"{R}😢 没找到满足条件的组合{X}，试试放宽热量或蛋白质目标。"); return 1
+    for i, p in enumerate(plans, 1):
+        t = p["total"]
+        print(f"方案 {i}" + (f"  ¥{t['price']:.1f}" if priced else ""))
+        for it in p["items"]:
+            q = f" ×{it['quantity']}" if it["quantity"] > 1 else ""
+            pr = f"¥{it['price']:.1f}  " if priced else ""
+            print(f"  - {it.get('menuName', it['name'])}{q}  {pr}{it['energyKcal']:.0f}kcal  蛋白{it['protein']:.0f}g")
+        print(f"  合计: {t['energyKcal']:.0f} kcal | 蛋白质 {t['protein']:.0f}g | 脂肪 {t['fat']:.0f}g | 碳水 {t['carbohydrate']:.0f}g | 钠 {t['sodium']:.0f}mg")
+        kc = max(t["energyKcal"], 1)
+        print(f"  供能比: 蛋白 {t['protein']*4/kc*100:.0f}% · 脂肪 {t['fat']*9/kc*100:.0f}% · 碳水 {t['carbohydrate']*4/kc*100:.0f}%\n")
+    if verify:
+        print(f"{G}✅ calculate-price 实时校验方案 1: ¥{verify['price']:.2f}（原价 ¥{verify['originalPrice']:.2f}）{X}")
+    print(f"{D}ℹ️ 营养数据来自麦当劳官方 MCP，仅供参考，不构成医疗或营养建议；价格以下单页为准。{X}")
+    return 0
+
+
+def _week_dates(today=None, n=7):
+    d, out = today or dt.date.today(), []
+    while len(out) < n:
+        if d.weekday() < 5:
+            out.append(d)
+        d += dt.timedelta(days=1)
+    return out
+
+
+def cmd_week(a, st, be):
+    """打工人周预算：一周午餐不重样。"""
+    split = lambda s: [x for x in (s or "").split(",") if x]
+    online = be.live
+    store = st.get("store")
+    if online:
+        if a.city or a.keyword:
+            hits = be.stores(a.city or "", a.keyword or a.city or "")
+            if not hits:
+                sys.exit(f"{R}error:{X} 没有找到门店")
+            store = {"storeCode": hits[0]["storeCode"], "storeName": hits[0].get("storeName", "")}
+            st["store"] = store; _save(st)
+        store_code = _need_store(st, be)
+        store = st["store"]
+        cats, meals = be.menu(store_code)
+        # attach tags from categories if present
+        tags = {}
+        for c in cats:
+            for code in c.get("codes", []):
+                tags.setdefault(code, set())
+        meals2 = {k: dict(v, tags=sorted(tags.get(k, ()))) for k, v in meals.items()}
+        cands = lunch_candidates(meals2)
+        if not a.member:
+            cands = [c for c in cands if "麦金卡" not in c.get("tags", [])]
+        cal = be.calendar()
+        coupons, store_coupons = be.coupons(store_code)
+        src = "实时 MCP"
+    else:
+        week_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "week_snapshot.json")
+        if os.path.exists(week_path):
+            s = json.load(open(week_path, encoding="utf-8"))
+            store = s["store"]; cands = s["candidates"]; cal = s.get("calendar", {})
+            coupons = s.get("coupons", []); store_coupons = s.get("storeCoupons", [])
+            if not a.member:
+                cands = [c for c in cands if "麦金卡" not in c.get("tags", [])]
+            src = "本地快照 " + s.get("fetchedAt", "")
+        else:
+            store_code = _need_store(st, be)
+            store = st["store"]
+            _, meals = be.menu(store_code)
+            cands = lunch_candidates(meals)
+            cal = be.calendar(); coupons, store_coupons = be.coupons(store_code)
+            src = "离线菜单"
+
+    plan = plan_week(cands, a.budget, a.days, split(a.prefer), split(a.exclude), a.max_same)
+    dates = _week_dates()
+    if a.json:
+        print(json.dumps({"store": store, "plan": plan, "calendar": cal, "coupons": coupons}, ensure_ascii=False, indent=1))
+        return 0 if plan else 1
+
+    print(f"{B}💼 mcd week{X} | 数据: {src} | 门店: {(store or {}).get('storeName')}")
+    print(f"预算 ¥{a.budget:.0f} / {a.days} 天（日均 ¥{a.budget / a.days:.1f}）\n")
+    if not plan:
+        cheapest = sorted(c["price"] for c in cands)[: a.days]
+        need = sum(cheapest) if cheapest else 0
+        print(f"{R}😢 预算不够 {a.days} 天不重样{X}，最低约 ¥{need:.1f}。试试提高预算或放宽 --max-same。")
+        return 1
+    total = sum(c["price"] for c in plan); orig = sum(c["originalPrice"] for c in plan)
+    for i, c in enumerate(plan):
+        d = dates[i]
+        save = f"  省¥{c['originalPrice'] - c['price']:.1f}" if c["originalPrice"] > c["price"] else ""
+        print(f"{DAYS[d.weekday()]} {d:%m-%d}  [{c['family']}] {c['name']:<16} ¥{c['price']:.1f}{save}")
+        for t in (cal.get(d.isoformat(), []) or [])[:1]:
+            print(f"           📅 当日活动: {t}")
+    print(f"\n合计 ¥{total:.1f} / 预算 ¥{a.budget:.0f}，剩余 ¥{a.budget - total:.1f}；比单点原价省 ¥{orig - total:.1f}")
+    if coupons:
+        print("🎟️ 麦麦省可领券（只读展示）: " + "、".join(coupons[:6]))
+    upcoming = [(d, t) for d, ts in sorted(cal.items()) if dates and d >= dates[0].isoformat() for t in ts][:3]
+    if upcoming:
+        print("📅 近期活动: " + "；".join(f"{d[5:]} {t}" for d, t in upcoming))
+    print(f"{D}ℹ️ 价格来自门店菜单/calculate-price，以下单页为准。{X}")
+    return 0
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="mcd", description="把麦当劳装进你的 $PATH 🍔")
     ap.add_argument("-v", "--version", action="version", version=f"mcd {VERSION} (程序员节特别版)")
@@ -210,6 +367,23 @@ def main(argv=None):
     s = sp.add_parser("checkout", aliases=["build"], help="--dry-run: 调用 calculate-price 出小票"); s.add_argument("--dry-run", action="store_true")
     s = sp.add_parser("sudo"); s.add_argument("rest", nargs="*")
     sp.add_parser("fortune")
+    s = sp.add_parser("fit", help="麦门健身餐：按热量/蛋白目标找最便宜组合")
+    s.add_argument("--goal", choices=list(PRESETS))
+    s.add_argument("--max-kcal", type=float); s.add_argument("--min-kcal", type=float)
+    s.add_argument("--min-protein", type=float); s.add_argument("--max-fat", type=float)
+    s.add_argument("--max-carb", type=float); s.add_argument("--max-sodium", type=float)
+    s.add_argument("--budget", type=float); s.add_argument("--max-items", type=int, default=4)
+    s.add_argument("--exclude", default=""); s.add_argument("--city"); s.add_argument("--keyword")
+    s.add_argument("--verify", action="store_true"); s.add_argument("--top", type=int, default=3)
+    s.add_argument("--json", action="store_true")
+    s = sp.add_parser("week", help="打工人周预算：一周午餐不重样")
+    s.add_argument("--budget", type=float, required=True)
+    s.add_argument("--days", type=int, default=5)
+    s.add_argument("--city"); s.add_argument("--keyword")
+    s.add_argument("--prefer", default=""); s.add_argument("--exclude", default="")
+    s.add_argument("--max-same", type=int, default=2)
+    s.add_argument("--member", action="store_true")
+    s.add_argument("--json", action="store_true")
     a = ap.parse_args(argv)
     if not a.cmd:
         ap.print_help(); return 0

@@ -58,3 +58,21 @@ def match(name, idx):
         if cand in idx:
             return idx[cand]
     return None
+
+
+def join_menu_items(meals, nut, skip_combos=True):
+    """Join menu meals with nutrition rows. Returns list of dicts with code, menuName, price, macros."""
+    idx = nutrition_index(nut)
+    out, seen = [], set()
+    for code, m in meals.items():
+        name = m["name"]
+        if skip_combos and (is_combo(name) or "套餐" in name):
+            continue
+        n = match(name, idx)
+        if not n:
+            continue
+        if code in seen:
+            continue
+        seen.add(code)
+        out.append(dict(n, code=code, menuName=name, price=float(m["currentPrice"])))
+    return out
